@@ -4,3 +4,17 @@
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 @media(max-width:650px){.gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.gallery .photo{grid-column:auto;grid-row:auto;width:100%;min-height:170px;height:170px;margin:0;transform:none}.gallery .photo.tall{min-height:170px;height:170px}.tickets{grid-template-columns:1fr}.ticket img{height:240px}.topbar{height:58px}.shell{margin-top:18px}.panel{border-radius:20px;padding:16px}.answerwrap{padding:0 6px;flex-direction:column}.answerwrap .btn{width:100%}.chapter-chip{font-size:9px;padding:8px 10px}.questbox{padding:20px}.music-button{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
+.topbar{position:sticky;top:0;z-index:5}
+.music-bar{position:relative;z-index:4;display:flex;align-items:center;gap:7px;width:100%;min-height:36px;margin:0;padding:3px clamp(14px,5vw,64px);border-top:2px solid #dfcedd;border-bottom:2px solid #dfcedd;background:#ffffff70;box-shadow:0 4px 16px #715d7414;backdrop-filter:blur(12px)}
+.music-bar-icon{font-size:14px;color:#a984a8}
+.music-bar-copy strong,.music-bar-copy small{display:block}
+.music-bar-copy{flex:1;min-width:0}
+.music-bar-copy strong{font-size:8px;letter-spacing:.1em;color:var(--ink)}
+.music-bar-copy small{margin-top:1px;font-size:8px;color:var(--muted)}
+.music-bar .music-button{width:27px;height:27px;display:grid;place-items:center;margin:0;padding:0;border:1px solid #b79ab8;background:#fff9fc;color:#866a8a;border-radius:50%;cursor:pointer;transition:background .2s,color .2s,transform .2s}
+.music-bar .music-button:hover{background:#8e748f;color:white;transform:scale(1.06)}
+.music-button svg{width:13px;height:13px;fill:currentColor;display:block}
+.music-pause-icon{display:none!important}
+.music-button.is-playing .music-play-icon{display:none}
+.music-button.is-playing .music-pause-icon{display:block!important}
+@media(max-width:650px){.music-bar{min-height:33px;padding:2px 16px;gap:6px}.music-bar-copy strong,.music-bar-copy small{font-size:8px}.music-bar .music-button{width:25px;height:25px}}

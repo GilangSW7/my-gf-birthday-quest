@@ -11,6 +11,14 @@
 <body>
   <div class="ambient" aria-hidden="true"></div>
   <header class="topbar"><a class="brand" href="#" aria-label="Birthday Quest">✦ BIRTHDAY QUEST</a><span id="clock" class="clock">22 NOV · WIB</span></header>
+  <aside class="music-bar" aria-label="Birthday soundtrack">
+    <span class="music-bar-icon" aria-hidden="true">♫</span>
+    <span class="music-bar-copy"><strong>LANY</strong><small>Prettiest Thing I've Ever Seen</small></span>
+    <button class="music-button" id="musicToggle" type="button" aria-label="Play birthday soundtrack">
+      <svg class="music-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8v12.4L18 12 8 5.8Z"/></svg>
+      <svg class="music-pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h4v14h-4z"/></svg>
+    </button>
+  </aside>
   <main id="app" class="shell" aria-live="polite"></main>
   <footer class="footer">MADE WITH LOVE · ONE DAY, FIVE CHAPTERS</footer>
   <audio id="music" loop preload="none"></audio>

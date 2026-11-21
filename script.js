@@ -300,18 +300,6 @@
         quiet dream into reality
       </p>
 
-      <div class="music-card">
-        <div class="music-copy">
-          <span class="music-icon">♫</span>
-          <div>
-            <strong>LANY</strong>
-            <small>Prettiest Thing I've Ever Seen</small>
-          </div>
-        </div>
-        <button class="music-button" id="musicToggle"
-          aria-label="Play birthday soundtrack">▶ PLAY SONG</button>
-      </div>
-
       <div class="btnrow">${button('BEGIN THE QUEST →')}</div>
       ${footerProgress()}
     </section>`);
@@ -323,35 +311,42 @@
       navigate(1);
     });
 
-    setupMusic();
   }
 
   function setupMusic() {
     const b = document.getElementById('musicToggle');
     if (!b) return;
 
-    if (!music.paused) {
-      b.textContent = 'PAUSE SONG';
-      b.setAttribute('aria-label', 'Pause birthday soundtrack');
-    }
+    music.addEventListener('play', updateMusicButton);
+    music.addEventListener('pause', updateMusicButton);
+    updateMusicButton();
 
     b.addEventListener('click', async () => {
       if (music.paused) {
         try {
           await music.play();
           musicManuallyPaused = false;
-          b.textContent = 'PAUSE SONG';
-          b.setAttribute('aria-label', 'Pause birthday soundtrack');
+          updateMusicButton();
         } catch {
           b.textContent = 'SONG FILE NOT FOUND';
         }
       } else {
         music.pause();
         musicManuallyPaused = true;
-        b.textContent = 'PLAY SONG';
-        b.setAttribute('aria-label', 'Play birthday soundtrack');
+        updateMusicButton();
       }
     });
+  }
+
+  function updateMusicButton() {
+    const button = document.getElementById('musicToggle');
+    if (!button) return;
+    const playing = !music.paused;
+    button.classList.toggle('is-playing', playing);
+    button.setAttribute('aria-label', playing
+      ? 'Pause birthday soundtrack'
+      : 'Play birthday soundtrack');
+    button.title = playing ? 'Pause soundtrack' : 'Play soundtrack';
   }
   function intro(title, roman, desc, question) {
     return `<section class="hero center">
@@ -565,8 +560,10 @@
     // Browsers commonly block audible autoplay. Retry from a real user gesture;
     // the first page's buttons also call startMusic() directly.
     music.play().catch(() => {});
-    document.addEventListener('pointerdown', startMusic, { once: true });
-    document.addEventListener('keydown', startMusic, { once: true });
+    document.addEventListener('pointerdown', startMusic);
+    document.addEventListener('keydown', startMusic);
+    document.addEventListener('scroll', startMusic, true);
+    document.addEventListener('wheel', startMusic, { passive: true });
   }
 
   function startMusic(event) {
@@ -575,17 +572,16 @@
     music.play().then(() => {
       document.removeEventListener('pointerdown', startMusic);
       document.removeEventListener('keydown', startMusic);
-      const button = document.getElementById('musicToggle');
-      if (button) {
-        button.textContent = 'PAUSE SONG';
-        button.setAttribute('aria-label', 'Pause birthday soundtrack');
-      }
+      document.removeEventListener('scroll', startMusic, true);
+      document.removeEventListener('wheel', startMusic);
+      updateMusicButton();
     }).catch(() => {});
   }
 
   updateClock();
   setInterval(updateClock, 30000);
   tryAutoplayMusic();
+  setupMusic();
   // Keep the soundtrack going when the visitor returns to this tab or a
   // chapter view is rendered again. Browsers still require an initial gesture.
   document.addEventListener('visibilitychange', () => {
