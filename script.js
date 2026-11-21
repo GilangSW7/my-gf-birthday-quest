@@ -317,6 +317,7 @@
     </section>`);
 
     document.getElementById('next').addEventListener('click', () => {
+      startMusic();
       state.completed = [...new Set([...state.completed, 0])];
       save();
       navigate(1);
@@ -476,7 +477,7 @@
       <div class="eyebrow">DESTINATION REVEALED</div>
       <h2>Movie Date Location</h2>
       <p>Guide your prince there, then download your tickets below.</p>
-      <a class="maplink" href="https://share.google/keUJrW4ZXsBFLcMgq"
+      <a class="maplink" href="https://www.google.com/maps/search/?api=1&query=CGV+Lagoon+Avenue+Bekasi"
         target="_blank" rel="noopener">OPEN DESTINATION MAP ↗</a>
     </div>
 
@@ -561,21 +562,36 @@
     music.volume = 0.45;
     music.preload = 'auto';
 
-    music.play().catch(() => {
-      const startOnFirstInteraction = () => {
-        document.removeEventListener('pointerdown', startOnFirstInteraction);
-        document.removeEventListener('keydown', startOnFirstInteraction);
-        music.play().catch(() => {});
-      };
+    // Browsers commonly block audible autoplay. Retry from a real user gesture;
+    // the first page's buttons also call startMusic() directly.
+    music.play().catch(() => {});
+    document.addEventListener('pointerdown', startMusic, { once: true });
+    document.addEventListener('keydown', startMusic, { once: true });
+  }
 
-      document.addEventListener('pointerdown', startOnFirstInteraction, { once: true });
-      document.addEventListener('keydown', startOnFirstInteraction, { once: true });
-    });
+  function startMusic(event) {
+    if (event?.target?.closest?.('#musicToggle')) return;
+    if (musicManuallyPaused || !music.src) return;
+    music.play().then(() => {
+      document.removeEventListener('pointerdown', startMusic);
+      document.removeEventListener('keydown', startMusic);
+      const button = document.getElementById('musicToggle');
+      if (button) {
+        button.textContent = 'PAUSE SONG';
+        button.setAttribute('aria-label', 'Pause birthday soundtrack');
+      }
+    }).catch(() => {});
   }
 
   updateClock();
   setInterval(updateClock, 30000);
   tryAutoplayMusic();
+  // Keep the soundtrack going when the visitor returns to this tab or a
+  // chapter view is rendered again. Browsers still require an initial gesture.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) resumeMusic();
+  });
+  window.addEventListener('pageshow', resumeMusic);
 
   if (!canOpen(current)) {
     current = getDefaultChapter();
