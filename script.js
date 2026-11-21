@@ -3,10 +3,10 @@
   const TZ = 'Asia/Jakarta';
   const RELEASES = [
     '2026-11-21T00:00:00+07:00',
-    '2026-11-21T10:00:00+07:00',
+    '2026-11-21T11:00:00+07:00',
     '2026-11-21T13:00:00+07:00',
-    '2026-11-21T14:00:00+07:00',
-    '2026-11-21T14:20:00+07:00'
+    '2026-11-22T17:00:00+07:00',
+    '2026-11-22T22:00:00+07:00'
   ].map(x => new Date(x));
 
   const CHAPTERS = [
@@ -18,6 +18,7 @@
   ];
 
   const KEY = 'birthdayQuest2026';
+  const SAVE_VERSION = 2;
   const app = document.getElementById('app');
   const clock = document.getElementById('clock');
   const music = document.getElementById('music');
@@ -31,7 +32,8 @@
     try {
       const raw = JSON.parse(localStorage.getItem(KEY));
 
-      if (!raw || !Array.isArray(raw.visited) ||
+      if (!raw || raw.version !== SAVE_VERSION ||
+          !Array.isArray(raw.visited) ||
           !Array.isArray(raw.completed)) {
         throw new Error('Invalid save');
       }
@@ -47,15 +49,17 @@
             Number.isInteger(n) && n >= 0 && n < 4
           )
         )],
-        music: false
+        music: false,
+        version: SAVE_VERSION
       };
     } catch {
-      return { visited: [], completed: [], music: false };
+      return { visited: [], completed: [], music: false, version: SAVE_VERSION };
     }
   }
 
   function save() {
     try {
+      state.version = SAVE_VERSION;
       localStorage.setItem(KEY, JSON.stringify(state));
     } catch {}
   }
@@ -213,7 +217,7 @@
     renderShell(`<section class="locked">
       <div class="lockmark">✧</div>
       <div class="eyebrow">QUEST NOT READY</div>
-      <h1 class="title">${safe(CHAPTERS[i] || 'Unknown Chapter')}</h1>
+      <h1 class="title spoiler-title">${safe(CHAPTERS[i] || 'Unknown Chapter')}</h1>
       <p class="subtitle center">
         ${i > 0 && !state.completed.includes(i - 1)
           ? 'The previous quest must be completed before this chapter can be accessed.'
@@ -294,7 +298,7 @@
       </div>
 
       <p class="letter">
-        Happy birthday to the Prettiest Thing I've Ever Seen.
+        Happy birthday to the prettiest thing I've ever seen.
         I hope this next chapter brings you endless joy, bold career
         breakthroughs, and the courage and blessings to turn every
         quiet dream into reality
@@ -391,6 +395,23 @@
     const feedback = document.getElementById('feedback');
     const reward = document.getElementById('reward');
 
+    const showReward = () => {
+      reward.innerHTML = `<section class="success center">
+          <div class="eyebrow">QUEST COMPLETED · REWARD UNLOCKED</div>
+          <h2>${successTitle}</h2>
+          <p>${successText}</p>
+          ${extra}
+        </section>`;
+      document.getElementById('nextrow').classList.remove('hidden');
+      input.disabled = true;
+      form.querySelector('button').disabled = true;
+      document.getElementById('next').addEventListener('click', () => {
+        navigate(nextChapter);
+      });
+    };
+
+    if (state.completed.includes(current)) showReward();
+
     form.addEventListener('submit', e => {
       e.preventDefault();
 
@@ -400,24 +421,12 @@
 
         feedback.textContent = '';
 
-        reward.innerHTML = `<section class="success center">
-          <div class="eyebrow">QUEST COMPLETED · REWARD UNLOCKED</div>
-          <h2>${successTitle}</h2>
-          <p>${successText}</p>
-          ${extra}
-        </section>`;
-
-        document.getElementById('nextrow').classList.remove('hidden');
-        input.disabled = true;
-        form.querySelector('button').disabled = true;
+        showReward();
 
         requestAnimationFrame(() => {
           reward.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
-        document.getElementById('next').addEventListener('click', () => {
-          navigate(nextChapter);
-        });
       } else {
         feedback.textContent = 'Not quite, adventurer. Try again!';
         input.classList.remove('shake');

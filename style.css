@@ -18,3 +18,9 @@
 .music-button.is-playing .music-play-icon{display:none}
 .music-button.is-playing .music-pause-icon{display:block!important}
 @media(max-width:650px){.music-bar{min-height:33px;padding:2px 16px;gap:6px}.music-bar-copy strong,.music-bar-copy small{font-size:8px}.music-bar .music-button{width:25px;height:25px}}
+
+.spoiler-title{filter:blur(8px);user-select:none}
+
+
+.feedback{text-align:center}
+
