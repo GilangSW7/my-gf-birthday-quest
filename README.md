@@ -22,7 +22,7 @@ Chapter access requires the previous chapter's quest to be completed, with the e
 
 
 ## Optional soundtrack
-The player is user-initiated to comply with browser autoplay restrictions. To use your own licensed/purchased audio file, add it as **`assets/music.mp3`**. The project does not include the copyrighted LANY track.
+The uploaded LANY MP3 is included at **`assets/music.mp3`**. Chapter 1 attempts autoplay with sound; browsers may block it, so a Play Song fallback is available.
 
 
 ## Deploy to GitHub Pages
